@@ -4,7 +4,7 @@ import snowflake.connector
 
 # --- Page settings ---
 st.set_page_config(page_title="Dumsor AI — Talk to your data", layout="wide")
-st.title("Dumsor AI (Snowflake Cortex Analyst)")
+st.title("Dumsor AI Analytics Dashboard")
 st.caption("Ask natural-language questions about outages, traffic, water, public response, or hospital waits. The semantic model returns accurate SQL you can inspect and (optionally) execute.")
 
 # --- Secrets (never hardcode credentials) ---
@@ -58,7 +58,7 @@ for role, text in st.session_state.history:
     with st.chat_message(role):
         st.markdown(text)
 
-prompt = st.chat_input("Ask, e.g., 'Top 10 districts by average outage minutes in 2025, verified only'")
+prompt = st.chat_input("Ask, e.g., 'Top 10 sidechicks that do not return call, verified only'")
 if prompt:
     st.session_state.history.append(("user", prompt))
     with st.chat_message("user"):
