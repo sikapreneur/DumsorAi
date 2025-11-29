@@ -1,10 +1,12 @@
 
-import json, requests, streamlit as st
+import json
+import requests
+import streamlit as st
 import snowflake.connector
 
 # --- Page settings ---
 st.set_page_config(page_title="Dumsor AI — Talk to your data", layout="wide")
-st.title("Dumsor AI (Snowflake Cortex Analyst)")
+st.title("Dumsor Analytics AI Dashboard")
 st.caption("Ask natural-language questions about outages, traffic, water, public response, or hospital waits. The semantic model returns accurate SQL you can inspect and (optionally) execute.")
 
 # --- Secrets (never hardcode credentials) ---
@@ -22,6 +24,7 @@ SF_SCHEMA    = st.secrets["snowflake"].get("schema")
 
 API_URL = f"https://{SF_ACCOUNT}.snowflakecomputing.com/api/v2/cortex/analyst/message"
 
+# --- Cortex Analyst API Call ---
 def ask_analyst(question: str) -> dict:
     headers = {
         "Authorization": f"Bearer {SF_TOKEN}",
@@ -29,12 +32,14 @@ def ask_analyst(question: str) -> dict:
     }
     payload = {
         "messages": [{"role": "user", "content": [{"type": "text", "text": question}]}],
-        "semantic_model_file": MODEL_FILE
+        "semantic_model_file": MODEL_FILE,
+        "debug": True  # ✅ Enable debug mode
     }
     r = requests.post(API_URL, headers=headers, json=payload, timeout=60)
     r.raise_for_status()
     return r.json()
 
+# --- SQL Execution ---
 def run_sql(sql: str):
     """Execute SQL only if connector creds exist in secrets."""
     if not (SF_USER and SF_PASSWORD and SF_ROLE and SF_WAREHOUSE and SF_DATABASE and SF_SCHEMA):
@@ -58,7 +63,8 @@ for role, text in st.session_state.history:
     with st.chat_message(role):
         st.markdown(text)
 
-prompt = st.chat_input("Ask, e.g., 'Top 10 sidechicks that do not return call, verified only'")
+# --- Chat Input ---
+prompt = st.chat_input("Ask, e.g., 'Top 10 districts by average outage minutes in 2025, verified only'")
 if prompt:
     st.session_state.history.append(("user", prompt))
     with st.chat_message("user"):
@@ -67,7 +73,12 @@ if prompt:
     try:
         result = ask_analyst(prompt)
 
-        # Parse Analyst response: 'text', 'sql', 'suggestions'
+        # ✅ Show debug info if available
+        if "debug_info" in result:
+            st.markdown("### Debug Info")
+            st.json(result["debug_info"])
+
+        # Parse Analyst response: 'text', 'sql'
         answer_text = ""
         sql_blocks = []
         for msg in result.get("messages", []):
@@ -95,9 +106,10 @@ if prompt:
         st.session_state.history.append(("assistant", answer_text or "(no text)"))
 
     except requests.HTTPError as e:
-        st.error(f"Cortex API error: {e.response.text}")
+        st.error(f"Cortex API error: {e.response.status_code} - {e.response.text}")
     except Exception as ex:
-        st.error(f"Unexpected error: {ex}")
+        st.error(f"Unexpected error: {str(ex)}")
 
 st.divider()
 st.caption("This app calls Snowflake Cortex Analyst (API-first) with your staged semantic model; it returns text + SQL for reproducible analytics.")
+st.caption("Developed by [ Kaunda Ai | ©2025 ]")
