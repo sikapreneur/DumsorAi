@@ -41,8 +41,8 @@ st.markdown("""
 """, unsafe_allow_html=True)
 
 # --- Logo and Title ---
-# st.image("https://i.postimg.cc/15ZBGgBv/Dumsor-Project-Logo-V3-20251122.png")
-st.image("https://i.postimg.cc/WbX9sNm3/Favicon.png")
+st.image("https://i.postimg.cc/15ZBGgBv/Dumsor-Project-Logo-V3-20251122.png")
+# st.image("https://i.postimg.cc/WbX9sNm3/Favicon.png")
 st.title("Dumsor Ai — Talk to Your Data")
 st.caption("Ask about power outages, traffic delays, water disruptions, and more in Ghana.")
 
