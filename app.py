@@ -13,7 +13,7 @@ from snowflake.snowpark import Session
 
 
 # --- Page settings ---
-st.set_page_config(page_title="Dumsor AI", layout="wide")
+st.set_page_config(page_title="Dumsor Ai") #st.set_page_config(page_title="Dumsor AI", layout="wide")
 st.title("Dumsor Ai — Talk to Your Data")
 st.caption("Ask questions about Dumsor (power outages), Time wasted in traffic, Water supply disruption , Public agency response time, or Hospital waiting time in Ghana.")
 
