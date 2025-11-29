@@ -193,5 +193,5 @@ if prompt:
                 st.error(f"Unexpected error: {str(ex)}")
 
 st.divider()
-st.caption("Kaunda | 2025 | kaunda@outlook.com | Dumsor.org | Facebook.com/KaundaAi")
+st.caption("Kaunda | @2025 | kaunda@outlook.com | Dumsor.org | Facebook.com/KaundaAi")
 # st.caption("This app uses Snowflake Cortex Analyst with your semantic model to return narrative text, SQL, and optional visualizations.")
