@@ -14,8 +14,8 @@ from snowflake.snowpark import Session
 
 # --- Page settings ---
 st.set_page_config(page_title="Dumsor AI — Talk to Your Data", layout="wide")
-st.title("Dumsor AI ss")
-st.caption("Ask natural-language questions about outages, traffic, water, public response, or hospital waits. The semantic model returns narrative text + SQL you can inspect and (optionally) execute.")
+st.title("Dumsor Ai")
+st.caption("Ask questions about Dumsor (power outages), Time wasted in traffic, Water supply disruption , Public agency response time, or Hospital waiting time in Ghana.")
 
 # --- Secrets ---
 SF_ACCOUNT = st.secrets["snowflake"]["account"]
@@ -108,7 +108,7 @@ for msg in st.session_state.messages:
                 st.code(item.get("statement", ""), language="sql")
 
 # --- Chat Input ---
-prompt = st.chat_input("Ask, e.g., 'Top 10 districts by average outage minutes in 2025, verified only'")
+prompt = st.chat_input("Ask, e.g., 'How much time was wasted in traffic last month?'")
 if prompt:
     user_msg = {"role": "user", "content": [{"type": "text", "text": prompt}]}
     st.session_state.messages.append(user_msg)
@@ -193,4 +193,5 @@ if prompt:
                 st.error(f"Unexpected error: {str(ex)}")
 
 st.divider()
-st.caption("This app uses Snowflake Cortex Analyst with your semantic model to return narrative text, SQL, and optional visualizations.")
+st.caption("Kaunda | 2025 | kaunda@outlook.com | Dumsor.org | Facebook.com/KaundaAi")
+# st.caption("This app uses Snowflake Cortex Analyst with your semantic model to return narrative text, SQL, and optional visualizations.")
