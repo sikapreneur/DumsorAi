@@ -98,7 +98,10 @@ if prompt:
                         sql_blocks.append(c.get("sql", ""))
 
         with st.chat_message("assistant"):
-            st.markdown(answer_text or "No narrative text returned.")
+            if answer_text.strip():
+                st.markdown(answer_text)
+            else:
+                st.warning("⚠️ No narrative text returned. Check Debug Info above for details.")
             if sql_blocks:
                 st.markdown("**Generated SQL**")
                 st.code(sql_blocks[0], language="sql")
