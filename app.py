@@ -26,8 +26,9 @@ st.markdown("""
             h1 {
                 font-size: 24px !important;
             }
-            .stImage {
-                width: 80px !important;
+            img {
+                max-width: 80px !important;
+                height: auto;
             }
         }
         .footer {
@@ -42,7 +43,7 @@ st.markdown("""
 # --- Logo and Title ---
 col1, col2 = st.columns([1, 4])
 with col1:
-    st.image("https://i.postimg.cc/15ZBGgBv/Dumsor-Project-Logo-V3-20251122.png", use_container_width=True)
+    st.image("https://i.postimg.cc/15ZBGgBv/Dumsor-Project-Logo-V3-20251122.png", width=120)
 with col2:
     st.title("Dumsor AI — Talk to Your Data")
     st.caption("Ask about power outages, traffic delays, water disruptions, and more in Ghana.")
@@ -219,7 +220,7 @@ if prompt:
                 st.error(f"Unexpected error: {str(ex)}")
 
 st.divider()
-st.markdown('<div class="footer">Kaunda | 2025 | mailto:kaunda@outlook.comkaunda@outlook.com</a> | <a href="https://gDumsor.org</a></div>', unsafe_allow_html=True)
+st.markdown('<div class="footer">Kaunda | 2025 | <a href="mailto:kaundacomkaunda@outlook.com</a> | https://Dumsor.orgDumsor.org</a></div>', unsafe_allow_html=True)
 
 
 # import json
