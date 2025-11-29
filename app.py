@@ -1,4 +1,3 @@
-
 import json
 import time
 from typing import Dict, List, Optional, Tuple
@@ -10,8 +9,6 @@ import snowflake.connector
 from snowflake.snowpark.context import get_active_session
 from snowflake.snowpark.exceptions import SnowparkSQLException
 from snowflake.snowpark import Session
-
-
 
 
 
@@ -47,7 +44,7 @@ connection_params = {
 
 session = Session.builder.configs(connection_params).create()
 
-session = get_active_session()  # For Snowpark-based summarization
+# session = get_active_session()  # For Snowpark-based summarization
 
 # --- Cortex Analyst API Call ---
 def ask_analyst(messages: List[Dict]) -> dict:
