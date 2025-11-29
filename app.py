@@ -6,7 +6,7 @@ import snowflake.connector
 
 # --- Page settings ---
 st.set_page_config(page_title="Dumsor AI — Talk to your data", layout="wide")
-st.title("Dumsor Analytics AI Dashboard")
+st.title("Dumsor AI (Snowflake Cortex Analyst)")
 st.caption("Ask natural-language questions about outages, traffic, water, public response, or hospital waits. The semantic model returns accurate SQL you can inspect and (optionally) execute.")
 
 # --- Secrets (never hardcode credentials) ---
@@ -77,6 +77,14 @@ if prompt:
         if "debug_info" in result:
             st.markdown("### Debug Info")
             st.json(result["debug_info"])
+
+        # ✅ Show error details if present
+        if "error" in result:
+            st.error(f"Error: {result['error'].get('message', 'Unknown error')}")
+
+        # ✅ Optional: Show raw API response
+        if st.checkbox("Show raw API response"):
+            st.json(result)
 
         # Parse Analyst response: 'text', 'sql'
         answer_text = ""
