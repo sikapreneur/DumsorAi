@@ -9,6 +9,21 @@ import streamlit as st
 import snowflake.connector
 from snowflake.snowpark.context import get_active_session
 from snowflake.snowpark.exceptions import SnowparkSQLException
+from snowflake.snowpark import Session
+
+connection_params = {
+    "account": SF_ACCOUNT,
+    "user": SF_USER,
+    "password": SF_PASSWORD,
+    "role": SF_ROLE,
+    "warehouse": SF_WAREHOUSE,
+    "database": SF_DATABASE,
+    "schema": SF_SCHEMA
+}
+
+session = Session.builder.configs(connection_params).create()
+
+
 
 # --- Page settings ---
 st.set_page_config(page_title="Dumsor AI — Talk to Your Data", layout="wide")
