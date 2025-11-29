@@ -41,10 +41,39 @@ st.markdown("""
 """, unsafe_allow_html=True)
 
 # --- Logo and Title ---
+
+st.markdown("""
+    <style>
+        .centered {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+        }
+        .centered img {
+            max-width: 150px;
+            height: auto;
+        }
+        @media (max-width: 768px) {
+            .centered img {
+                max-width: 100px;
+            }
+            h1 {
+                font-size: 24px !important;
+            }
+        }
+    </style>
+""", unsafe_allow_html=True)
+
+st.markdown('<div class="centered">', unsafe_allow_html=True)
 st.image("https://i.postimg.cc/15ZBGgBv/Dumsor-Project-Logo-V3-20251122.png")
+# Optional favicon
 # st.image("https://i.postimg.cc/WbX9sNm3/Favicon.png")
-st.title("Dumsor Ai — Talk to Your Data")
-st.caption("Ask about power outages, traffic delays, water disruptions, and more in Ghana.")
+st.markdown("<h1>Dumsor Ai — Talk to Your Data</h1>", unsafe_allow_html=True)
+st.markdown("<p>Ask about power outages, traffic delays, water disruptions, and more in Ghana.</p>", unsafe_allow_html=True)
+st.markdown('</div>', unsafe_allow_html=True)
+
 
 # --- Sidebar ---
 # st.sidebar.header("Navigation")
