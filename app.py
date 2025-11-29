@@ -11,17 +11,7 @@ from snowflake.snowpark.context import get_active_session
 from snowflake.snowpark.exceptions import SnowparkSQLException
 from snowflake.snowpark import Session
 
-connection_params = {
-    "account": SF_ACCOUNT,
-    "user": SF_USER,
-    "password": SF_PASSWORD,
-    "role": SF_ROLE,
-    "warehouse": SF_WAREHOUSE,
-    "database": SF_DATABASE,
-    "schema": SF_SCHEMA
-}
 
-session = Session.builder.configs(connection_params).create()
 
 
 
@@ -44,6 +34,19 @@ SF_DATABASE = st.secrets["snowflake"].get("database")
 SF_SCHEMA = st.secrets["snowflake"].get("schema")
 
 API_URL = f"https://{SF_ACCOUNT}.snowflakecomputing.com/api/v2/cortex/analyst/message"
+
+connection_params = {
+    "account": SF_ACCOUNT,
+    "user": SF_USER,
+    "password": SF_PASSWORD,
+    "role": SF_ROLE,
+    "warehouse": SF_WAREHOUSE,
+    "database": SF_DATABASE,
+    "schema": SF_SCHEMA
+}
+
+session = Session.builder.configs(connection_params).create()
+
 session = get_active_session()  # For Snowpark-based summarization
 
 # --- Cortex Analyst API Call ---
