@@ -150,8 +150,8 @@ if prompt:
 
                 # Display SQL and execute
                 if sql_statement:
-                    st.markdown("**Generated SQL**")
-                    st.code(sql_statement, language="sql")
+                    # st.markdown("**Generated SQL**")
+                    # st.code(sql_statement, language="sql")
 
                     df, err = run_sql(sql_statement)
                     if df is not None:
