@@ -1,29 +1,10 @@
 
 import json, requests, streamlit as st
 import snowflake.connector
-import logging
-import sys
-
-# --- Setup Debugging ---
-logging.basicConfig(
-    level=logging.DEBUG,
-    format='%(asctime)s - %(levelname)s - %(message)s',
-    handlers=[
-        logging.StreamHandler(sys.stdout),
-        logging.FileHandler('/tmp/dumsor_debug.log')
-    ]
-)
-logger = logging.getLogger(__name__)
-
-# Debug mode toggle
-DEBUG_MODE = True
-
-if DEBUG_MODE:
-    logger.info("🔍 DEBUG MODE ENABLED - All operations will be logged")
 
 # --- Page settings ---
 st.set_page_config(page_title="Dumsor AI — Talk to your data", layout="wide")
-st.title("Dumsor AI Analytics Dashboard")
+st.title("Dumsor AI (Snowflake Cortex Analyst)")
 st.caption("Ask natural-language questions about outages, traffic, water, public response, or hospital waits. The semantic model returns accurate SQL you can inspect and (optionally) execute.")
 
 # --- Secrets (never hardcode credentials) ---
@@ -42,57 +23,32 @@ SF_SCHEMA    = st.secrets["snowflake"].get("schema")
 API_URL = f"https://{SF_ACCOUNT}.snowflakecomputing.com/api/v2/cortex/analyst/message"
 
 def ask_analyst(question: str) -> dict:
-    logger.info(f"📤 Calling ask_analyst with question: {question}")
     headers = {
         "Authorization": f"Bearer {SF_TOKEN}",
         "Content-Type": "application/json"
     }
-    logger.debug(f"Headers: {headers}")
     payload = {
         "messages": [{"role": "user", "content": [{"type": "text", "text": question}]}],
         "semantic_model_file": MODEL_FILE
     }
-    logger.debug(f"Payload: {json.dumps(payload, indent=2)}")
-    try:
-        logger.info(f"📡 Sending request to {API_URL}")
-        r = requests.post(API_URL, headers=headers, json=payload, timeout=60)
-        logger.debug(f"Response status: {r.status_code}")
-        r.raise_for_status()
-        response_data = r.json()
-        logger.debug(f"Response data: {json.dumps(response_data, indent=2)}")
-        return response_data
-    except requests.HTTPError as e:
-        logger.error(f"❌ HTTP Error: {e.response.status_code} - {e.response.text}")
-        raise
-    except Exception as e:
-        logger.error(f"❌ Exception in ask_analyst: {str(e)}", exc_info=True)
-        raise
+    r = requests.post(API_URL, headers=headers, json=payload, timeout=60)
+    r.raise_for_status()
+    return r.json()
 
 def run_sql(sql: str):
     """Execute SQL only if connector creds exist in secrets."""
-    logger.info("🔗 Attempting to run SQL")
     if not (SF_USER and SF_PASSWORD and SF_ROLE and SF_WAREHOUSE and SF_DATABASE and SF_SCHEMA):
-        logger.warning("⚠️ Missing Snowflake credentials - SQL execution disabled")
         return None, None
-    try:
-        logger.debug(f"📊 Connecting to Snowflake: account={SF_ACCOUNT}, warehouse={SF_WAREHOUSE}, database={SF_DATABASE}")
-        conn = snowflake.connector.connect(
-            account=SF_ACCOUNT, user=SF_USER, password=SF_PASSWORD,
-            role=SF_ROLE, warehouse=SF_WAREHOUSE, database=SF_DATABASE, schema=SF_SCHEMA,
-        )
-        logger.info("✅ Snowflake connection established")
-        cur = conn.cursor()
-        logger.debug(f"📝 Executing SQL: {sql}")
-        cur.execute(sql)
-        rows = cur.fetchall()
-        cols = [c[0] for c in cur.description]
-        logger.info(f"✅ Query executed successfully - returned {len(rows)} rows with {len(cols)} columns")
-        cur.close()
-        conn.close()
-        return cols, rows
-    except Exception as e:
-        logger.error(f"❌ SQL execution error: {str(e)}", exc_info=True)
-        raise
+    conn = snowflake.connector.connect(
+        account=SF_ACCOUNT, user=SF_USER, password=SF_PASSWORD,
+        role=SF_ROLE, warehouse=SF_WAREHOUSE, database=SF_DATABASE, schema=SF_SCHEMA,
+    )
+    cur = conn.cursor()
+    cur.execute(sql)
+    rows = cur.fetchall()
+    cols = [c[0] for c in cur.description]
+    cur.close(); conn.close()
+    return cols, rows
 
 # --- Chat history ---
 if "history" not in st.session_state:
@@ -104,13 +60,11 @@ for role, text in st.session_state.history:
 
 prompt = st.chat_input("Ask, e.g., 'Top 10 sidechicks that do not return call, verified only'")
 if prompt:
-    logger.info(f"📨 User input received: {prompt}")
     st.session_state.history.append(("user", prompt))
     with st.chat_message("user"):
         st.markdown(prompt)
 
     try:
-        logger.info("🤖 Calling Analyst API...")
         result = ask_analyst(prompt)
 
         # Parse Analyst response: 'text', 'sql', 'suggestions'
@@ -123,8 +77,6 @@ if prompt:
                         answer_text += c.get("text", "") + "\n"
                     elif c.get("type") == "sql":
                         sql_blocks.append(c.get("sql", ""))
-        
-        logger.info(f"✅ API response parsed - Text: {len(answer_text)} chars, SQL blocks: {len(sql_blocks)}")
 
         with st.chat_message("assistant"):
             st.markdown(answer_text or "No narrative text returned.")
@@ -133,7 +85,6 @@ if prompt:
                 st.code(sql_blocks[0], language="sql")
 
                 # Execute & display (if connector creds present)
-                logger.info(f"📋 Attempting to execute SQL query...")
                 cols, rows = run_sql(sql_blocks[0])
                 if cols and rows is not None:
                     st.markdown("**Results**")
@@ -144,13 +95,9 @@ if prompt:
         st.session_state.history.append(("assistant", answer_text or "(no text)"))
 
     except requests.HTTPError as e:
-        error_msg = f"Cortex API error: {e.response.text}"
-        logger.error(f"❌ {error_msg}")
-        st.error(error_msg)
+        st.error(f"Cortex API error: {e.response.text}")
     except Exception as ex:
-        error_msg = f"Unexpected error: {ex}"
-        logger.error(f"❌ {error_msg}", exc_info=True)
-        st.error(error_msg)
+        st.error(f"Unexpected error: {ex}")
 
 st.divider()
 st.caption("This app calls Snowflake Cortex Analyst (API-first) with your staged semantic model; it returns text + SQL for reproducible analytics.")
