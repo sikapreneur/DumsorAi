@@ -11,7 +11,6 @@ from snowflake.snowpark.exceptions import SnowparkSQLException
 from snowflake.snowpark import Session
 
 
-
 # --- Page settings ---
 st.set_page_config(page_title="Dumsor AI", layout="wide")
 st.title("Dumsor Ai — Talk to Your Data")
