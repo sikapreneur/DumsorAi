@@ -12,7 +12,7 @@ from snowflake.snowpark.exceptions import SnowparkSQLException
 
 # --- Page settings ---
 st.set_page_config(page_title="Dumsor AI — Talk to Your Data", layout="wide")
-st.title("Dumsor AI (Snowflake Cortex Analyst)")
+st.title("Dumsor AI ss")
 st.caption("Ask natural-language questions about outages, traffic, water, public response, or hospital waits. The semantic model returns narrative text + SQL you can inspect and (optionally) execute.")
 
 # --- Secrets ---
