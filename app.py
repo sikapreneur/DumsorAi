@@ -49,11 +49,11 @@ with col2:
     st.caption("Ask about power outages, traffic delays, water disruptions, and more in Ghana.")
 
 # --- Sidebar ---
-st.sidebar.header("Navigation")
-st.sidebar.markdown("### Options")
-st.sidebar.write("- Home")
-st.sidebar.write("- Reports")
-st.sidebar.write("- Settings")
+# st.sidebar.header("Navigation")
+# st.sidebar.markdown("### Options")
+# st.sidebar.write("- Home")
+# st.sidebar.write("- Reports")
+# st.sidebar.write("- Settings")
 
 # --- Secrets ---
 SF_ACCOUNT = st.secrets["snowflake"]["account"]
